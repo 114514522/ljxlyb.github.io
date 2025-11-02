@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>随机音乐播放器</title>
+</head>
+<body>
+    <h1>随机音乐播放器</h1>
+    <audio id="audioPlayer" controls></audio>
+    <div>
+        <button onclick="playRandom()">随机播放</button>
+        <button onclick="pauseMusic()">暂停</button>
+    </div>
+    <div id="currentSong"></div>
+
+    <script>
+        let musicList = [];
+        let currentIndex = -1;
+
+        // 从后端获取随机音乐列表
+        async function loadRandomMusic() {
+            try {
+                const response = await fetch('/cgi-bin/randomMusic'); // 假设C++程序部署为CGI
+                musicList = await response.json();
+                return true;
+            } catch (error) {
+                console.error('加载音乐列表失败:', error);
+                return false;
+            }
+        }
+
+        // 播放随机音乐
+        async function playRandom() {
+            if (musicList.length === 0) {
+                if (!await loadRandomMusic()) {
+                    alert('无法加载音乐列表');
+                    return;
+                }
+           
